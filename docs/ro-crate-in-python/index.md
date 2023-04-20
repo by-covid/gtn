@@ -1,31 +1,28 @@
+# RO-Crate in Python
 
-ro-crate-py is a Python library to create and consume [Research Object Crates](https://w3id.org/ro/crate). It currently supports the [RO-Crate 1.1](https://w3id.org/ro/crate/1.1) specification.
+This tutorial will show you how to manipulate [RO-Crates](https://w3id.org/ro/crate/) in Python using the [ro-crate-py](https://github.com/ResearchObject/ro-crate-py) package. It is based on the ro-crate-py documentation.
 
-
-## Installation
-
-ro-crate-py requires Python 3.7 or later. The easiest way to install is via [pip](https://docs.python.org/3/installing/):
+Let's start by installing the library via [pip](https://docs.python.org/3/installing/). Note that the name of the package is `rocrate`.
 
 ```
 pip install rocrate
 ```
 
-To install manually from this code base (e.g., to try the latest development revision):
 
+## Creating an RO-Crate
+
+In its simplest form, an RO-Crate is a directory tree with an `ro-crate-metadata.json` file at the top level (a "crate"). This file contains metadata about the other files and directories in the crate, represented by [data entities](https://www.researchobject.org/ro-crate/1.1/data-entities.html). These metadata consist both of properties of the data entities themselves and of other, non-digital entities called [contextual entities](https://www.researchobject.org/ro-crate/1.1/contextual-entities.html). A contextual entity can represent, for instance, a person, an organization or an event.
+
+Suppose Alice and Bob worked on a research project together, and then wrote a paper about it; additionally, Alice prepared a spreadsheet containing experimental data, which Bob then used to generate a diagram. For the purpose of this tutorial, you can just create dummy files for the documents:
+
+```bash
+mkdir exp
+touch exp/paper.pdf
+touch exp/results.csv
+touch exp/diagram.svg
 ```
-git clone https://github.com/ResearchObject/ro-crate-py
-cd ro-crate-py
-pip install .
-```
 
-
-## Usage
-
-### Creating an RO-Crate
-
-In its simplest form, an RO-Crate is a directory tree with an `ro-crate-metadata.json` file at the top level that contains metadata about the other files and directories, represented by [data entities](https://www.researchobject.org/ro-crate/1.1/data-entities.html). These metadata consist both of properties of the data entities themselves and of other, non-digital entities called [contextual entities](https://www.researchobject.org/ro-crate/1.1/contextual-entities.html) (representing, e.g., a person or an organization).
-
-Suppose Alice and Bob worked on a research task together, which resulted in a manuscript written by both; additionally, Alice prepared a spreadsheet containing the experimental data, which Bob used to generate a diagram. Let's make an RO-Crate to package all this:
+Let's make an RO-Crate to represent this information:
 
 ```python
 from rocrate.rocrate import ROCrate
@@ -45,7 +42,7 @@ diagram = crate.add_file("exp/diagram.svg", dest_path="images/figure.svg", prope
 })
 ```
 
-We've started by adding the data entities. Now we need contextual entities to represent Alice and Bob:
+We've started by adding the data entities. Now we add contextual entities representing Alice and Bob:
 
 ```python
 from rocrate.model.person import Person
@@ -62,12 +59,24 @@ bob = crate.add(Person(crate, bob_id, properties={
 }))
 ```
 
-Next, we express authorship of the various files:
+At this point, we have a representation of the various entities. Now we need to express the relationships between them. This is done by adding properties that reference other entities:
 
 ```python
 paper["author"] = [alice, bob]
 table["author"] = alice
 diagram["author"] = bob
+```
+
+You can also add whole directories together with their contents. In RO-Crate, a directory is represented by the `Dataset` entity:
+
+```bash
+mkdir exp/logs
+touch exp/logs/log1.txt
+touch exp/logs/log2.txt
+```
+
+```python
+logs = crate.add_dataset("exp/logs")
 ```
 
 Finally, we serialize the crate to disk:
@@ -76,21 +85,15 @@ Finally, we serialize the crate to disk:
 crate.write("exp_crate")
 ```
 
-Now the `exp_crate` directory should contain copies of the three files and an `ro-crate-metadata.json` file with a JSON-LD serialization of the entities and relationships we created, according to the RO-Crate profile. Note that we have chosen a different destination path for the diagram, while the other two files have been placed at the top level with their names unchanged (the default).
+This should generate an `exp_crate` directory containing copies of all the files that we added, and an `ro-crate-metadata.json` file with a JSON-LD serialization of the entities and relationships. Note that we have chosen a different destination path for the diagram, while the paper and the spreadsheet have been placed at the top level with their names unchanged (the default).
 
-Some applications and services support RO-Crates stored as archives. To save the crate in zip format, use `write_zip`:
+Some applications and services support RO-Crates stored as archives. To save the crate in zip format, you can use `write_zip`:
 
 ```python
 crate.write_zip("exp_crate.zip")
 ```
 
-You can also add whole directories. A directory in RO-Crate is represented by the `Dataset` entity:
-
-```python
-logs = crate.add_dataset("exp/logs")
-```
-
-#### Appending elements to property values
+### Appending elements to property values
 
 What ro-crate-py entities actually store is their JSON representation:
 
@@ -126,7 +129,7 @@ for n in "Mickey_Mouse", "Scrooge_McDuck":
     donald.append_to("follows", p)
 ```
 
-#### Adding remote entities
+### Adding remote entities
 
 Data entities can also be remote:
 
@@ -134,7 +137,7 @@ Data entities can also be remote:
 input_data = crate.add_file("http://example.org/exp_data.zip")
 ```
 
-By default the file won't be downloaded, and will be referenced by its URI in the serialized crate:
+By default the file won't be downloaded, and will be referenced by its URI in `ro-crate-metadata.json`:
 
 ```json
 {
@@ -145,10 +148,9 @@ By default the file won't be downloaded, and will be referenced by its URI in th
 
 If you add `fetch_remote=True` to the `add_file` call, however, the library (when `crate.write` is called) will try to download the file and include it in the output crate.
 
-Another option that influences the behavior when dealing with remote entities is `validate_url`, also `False` by default: if it's set to `True`, when the crate is serialized, the library will try to open the URL to add / update metadata bits such as the content's length and format (but it won't try to download the file unless `fetch_remote` is also set).
+Another option that influences the behavior when dealing with remote entities is `validate_url`, also `False` by default: if it's set to `True`, when the crate is serialized, the library will try to open the URL to add / update metadata such as the content's length and format.
 
-
-#### Adding entities with an arbitrary type
+### Adding entities with an arbitrary type
 
 An entity can be of any type listed in the [RO-Crate context](https://www.researchobject.org/ro-crate/1.1/context.jsonld). However, only a few of them have a counterpart (e.g., `File`) in the library's class hierarchy (either because they are very common or because they are associated with specific functionality that can be conveniently embedded in the class implementation). In other cases, you can explicitly pass the type via the `properties` argument:
 
@@ -170,61 +172,8 @@ Note that entities can have multiple types, e.g.:
     "@type" = ["File", "SoftwareSourceCode"]
 ```
 
-#### Modifying the crate from JSON-LD dictionaries
 
-The `add_jsonld` method allows to add a contextual entity directly from a
-JSON-LD dictionary containing at least the `@id` and `@type` keys:
-
-```python
-crate.add_jsonld({
-    "@id": "https://orcid.org/0000-0000-0000-0000",
-    "@type": "Person",
-    "name": "Alice Doe"
-})
-```
-
-Existing entities can be updated from JSON-LD dictionaries via `update_jsonld`:
-
-```python
-crate.update_jsonld({
-    "@id": "https://orcid.org/0000-0000-0000-0000",
-    "name": "Alice K. Doe"
-})
-```
-
-There is also an `add_or_update_jsonld` method that adds the entity if it's
-not already in the crate and updates it if it already exists (note that, when
-updating, the `@type` key is ignored). This allows to "patch" an RO-Crate from
-a JSON-LD file. For instance, suppose you have the following `patch.json` file:
-
-```json
-{
-    "@graph": [
-        {
-            "@id": "./",
-            "author": {"@id": "https://orcid.org/0000-0000-0000-0001"}
-        },
-        {
-            "@id": "https://orcid.org/0000-0000-0000-0001",
-            "@type": "Person",
-            "name": "Bob Doe"
-        }
-    ]
-}
-```
-
-Then the following sets Bob as the author of the crate according to the above
-file:
-
-```python
-crate = ROCrate("temp-crate")
-with open("patch.json") as f:
-    json_data = json.load(f)
-for d in json_data.get("@graph", []):
-    crate.add_or_update_jsonld(d)
-```
-
-### Consuming an RO-Crate
+## Consuming an RO-Crate
 
 An existing RO-Crate package can be loaded from a directory or zip file:
 
@@ -242,9 +191,10 @@ results.csv File
 images/figure.svg File
 https://orcid.org/0000-0000-0000-0000 Person
 https://orcid.org/0000-0000-0000-0001 Person
+...
 ```
 
-The first two entities shown in the output are the [metadata file descriptor](https://www.researchobject.org/ro-crate/1.1/metadata.html) and the [root data entity](https://www.researchobject.org/ro-crate/1.1/root-data-entity.html), respectively. These are special entities managed by the `ROCrate` object, and are always present. The other entities are the ones we added in the [section on RO-Crate creation](#creating-an-ro-crate). You can access data entities with `crate.data_entities` and contextual entities with `crate.contextual_entities`. For instance:
+The first two entities shown in the output are the [metadata file descriptor](https://www.researchobject.org/ro-crate/1.1/metadata.html) and the [root data entity](https://www.researchobject.org/ro-crate/1.1/root-data-entity.html), respectively. The former represents the metadata file, while the latter represents the whole crate. These are special entities managed by the `ROCrate` object, and are always present. The other entities are the ones we added in the [section on RO-Crate creation](#creating-an-ro-crate). As shown above, `get_entities` allows to iterate over all entities in the crate. You can also access data entities only with `crate.data_entities` and contextual entities only with `crate.contextual_entities`. For instance:
 
 ```python
 for e in crate.data_entities:
@@ -252,9 +202,9 @@ for e in crate.data_entities:
     if not author:
         continue
     elif isinstance(author, list):
-        print(e.id, [p["name"] for p in author])
+        print(e.id, [p.get("name") for p in author])
     else:
-        print(e.id, repr(author["name"]))
+        print(e.id, repr(author.get("name")))
 ```
 
 ```
@@ -266,7 +216,7 @@ images/figure.svg 'Bob Doe'
 You can fetch an entity by its `@id` as follows:
 
 ```python
-article = crate.dereference("paper.pdf")
+article = crate.dereference("paper.pdf")  # or crate.get("paper.pdf")
 ```
 
 
@@ -326,9 +276,11 @@ Note that data entities (e.g., workflows) must already be present in the directo
 
 ### Example
 
+To run the following commands, we need a copy of the ro-crate-py repository:
+
 ```bash
-# From the ro-crate-py repository root
-cd test/test-data/ro-crate-galaxy-sortchangecase
+git clone https://github.com/ResearchObject/ro-crate-py
+cd ro-crate-py/test/test-data/ro-crate-galaxy-sortchangecase
 ```
 
 This directory is already an RO-Crate. Delete the metadata file to get a plain directory tree:
@@ -337,7 +289,7 @@ This directory is already an RO-Crate. Delete the metadata file to get a plain d
 rm ro-crate-metadata.json
 ```
 
-Now the directory tree contains several files and directories, including a Galaxy workflow and a Planemo test file, but it's not an RO-Crate since there is no metadata file. Initialize the crate:
+Now the directory tree contains several files and directories, including a Galaxy workflow and a Planemo test file, but it's not an RO-Crate anymore, since there is no metadata file. Initialize the crate:
 
 ```bash
 rocrate init
@@ -352,13 +304,13 @@ This creates an `ro-crate-metadata.json` file that lists files and directories r
 }
 ```
 
-To register the workflow as a `ComputationalWorkflow`:
+To register the workflow as a `ComputationalWorkflow`, run the following:
 
 ```bash
 rocrate add workflow -l galaxy sort-and-change-case.ga
 ```
 
-Now the workflow has a type of `["File", "SoftwareSourceCode", "ComputationalWorkflow"]` and points to a `ComputerLanguage` entity that represents the Galaxy workflow language. Also, the workflow is listed as the crate's `mainEntity` (see https://about.workflowhub.eu/Workflow-RO-Crate).
+Now the workflow has a type of `["File", "SoftwareSourceCode", "ComputationalWorkflow"]` and points to a `ComputerLanguage` entity that represents the Galaxy workflow language. Also, the workflow is listed as the crate's `mainEntity` (see https://w3id.org/workflowhub/workflow-ro-crate/1.0).
 
 To add [workflow testing metadata](https://github.com/crs4/life_monitor/wiki/Workflow-Testing-RO-Crate) to the crate:
 
