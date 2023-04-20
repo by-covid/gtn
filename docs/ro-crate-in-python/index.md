@@ -1,6 +1,6 @@
 # RO-Crate in Python
 
-This tutorial will show you how to manipulate [RO-Crates](https://w3id.org/ro/crate/) in Python using the [ro-crate-py](https://github.com/ResearchObject/ro-crate-py) package. It is based on the ro-crate-py documentation.
+This tutorial will show you how to manipulate [RO-Crates](https://w3id.org/ro/crate/) in Python using the [ro-crate-py](https://github.com/ResearchObject/ro-crate-py) package. It is based on the [ro-crate-py documentation](https://github.com/ResearchObject/ro-crate-py/blob/e1218fbca595f4c33059cfe15849ee2ae9e6896b/README.md).
 
 Let's start by installing the library via [pip](https://docs.python.org/3/installing/). Note that the name of the package is `rocrate`.
 
@@ -11,7 +11,7 @@ pip install rocrate
 
 ## Creating an RO-Crate
 
-In its simplest form, an RO-Crate is a directory tree with an `ro-crate-metadata.json` file at the top level (a "crate"). This file contains metadata about the other files and directories in the crate, represented by [data entities](https://www.researchobject.org/ro-crate/1.1/data-entities.html). These metadata consist both of properties of the data entities themselves and of other, non-digital entities called [contextual entities](https://www.researchobject.org/ro-crate/1.1/contextual-entities.html). A contextual entity can represent, for instance, a person, an organization or an event.
+In its simplest form, an RO-Crate is a directory tree with an `ro-crate-metadata.json` file at the top level. This file contains metadata about the other files and directories, represented by [data entities](https://www.researchobject.org/ro-crate/1.1/data-entities.html). These metadata consist both of properties of the data entities themselves and of other, non-digital entities called [contextual entities](https://www.researchobject.org/ro-crate/1.1/contextual-entities.html). A contextual entity can represent, for instance, a person, an organization or an event.
 
 Suppose Alice and Bob worked on a research project together, and then wrote a paper about it; additionally, Alice prepared a spreadsheet containing experimental data, which Bob then used to generate a diagram. For the purpose of this tutorial, you can just create dummy files for the documents:
 
@@ -85,7 +85,7 @@ Finally, we serialize the crate to disk:
 crate.write("exp_crate")
 ```
 
-This should generate an `exp_crate` directory containing copies of all the files that we added, and an `ro-crate-metadata.json` file with a JSON-LD serialization of the entities and relationships. Note that we have chosen a different destination path for the diagram, while the paper and the spreadsheet have been placed at the top level with their names unchanged (the default).
+This should generate an `exp_crate` directory containing copies of all the files we added and an `ro-crate-metadata.json` file containing a JSON-LD representation of the metadata. Note that we have chosen a different destination path for the diagram, while the paper and the spreadsheet have been placed at the top level with their names unchanged (the default).
 
 Some applications and services support RO-Crates stored as archives. To save the crate in zip format, you can use `write_zip`:
 
@@ -143,7 +143,7 @@ By default the file won't be downloaded, and will be referenced by its URI in `r
 {
   "@id": "http://example.org/exp_data.zip",
   "@type": "File"
-},
+}
 ```
 
 If you add `fetch_remote=True` to the `add_file` call, however, the library (when `crate.write` is called) will try to download the file and include it in the output crate.
@@ -152,7 +152,7 @@ Another option that influences the behavior when dealing with remote entities is
 
 ### Adding entities with an arbitrary type
 
-An entity can be of any type listed in the [RO-Crate context](https://www.researchobject.org/ro-crate/1.1/context.jsonld). However, only a few of them have a counterpart (e.g., `File`) in the library's class hierarchy (either because they are very common or because they are associated with specific functionality that can be conveniently embedded in the class implementation). In other cases, you can explicitly pass the type via the `properties` argument:
+An entity can be of any type listed in the [RO-Crate context](https://www.researchobject.org/ro-crate/1.1/context.jsonld). However, only a few of them have a counterpart (e.g., `File`) in the library's class hierarchy, either because they are very common or because they are associated with specific functionality that can be conveniently embedded in the class implementation. In other cases, you can explicitly pass the type via the `properties` argument:
 
 ```python
 from rocrate.model.contextentity import ContextEntity
@@ -194,7 +194,7 @@ https://orcid.org/0000-0000-0000-0001 Person
 ...
 ```
 
-The first two entities shown in the output are the [metadata file descriptor](https://www.researchobject.org/ro-crate/1.1/metadata.html) and the [root data entity](https://www.researchobject.org/ro-crate/1.1/root-data-entity.html), respectively. The former represents the metadata file, while the latter represents the whole crate. These are special entities managed by the `ROCrate` object, and are always present. The other entities are the ones we added in the [section on RO-Crate creation](#creating-an-ro-crate). As shown above, `get_entities` allows to iterate over all entities in the crate. You can also access data entities only with `crate.data_entities` and contextual entities only with `crate.contextual_entities`. For instance:
+The first two entities shown in the output are the [metadata file descriptor](https://www.researchobject.org/ro-crate/1.1/metadata.html) and the [root data entity](https://www.researchobject.org/ro-crate/1.1/root-data-entity.html), respectively. The former represents the metadata file, while the latter represents the whole crate. These are special entities managed by the `ROCrate` object, and are always present. The other entities are the ones we added in the [section on RO-Crate creation](#creating-an-ro-crate). As shown above, `get_entities` allows to iterate over all entities in the crate. You can also access only data entities with `crate.data_entities` and only contextual entities with `crate.contextual_entities`. For instance:
 
 ```python
 for e in crate.data_entities:
@@ -310,9 +310,9 @@ To register the workflow as a `ComputationalWorkflow`, run the following:
 rocrate add workflow -l galaxy sort-and-change-case.ga
 ```
 
-Now the workflow has a type of `["File", "SoftwareSourceCode", "ComputationalWorkflow"]` and points to a `ComputerLanguage` entity that represents the Galaxy workflow language. Also, the workflow is listed as the crate's `mainEntity` (see https://w3id.org/workflowhub/workflow-ro-crate/1.0).
+Now the workflow has a type of `["File", "SoftwareSourceCode", "ComputationalWorkflow"]` and points to a `ComputerLanguage` entity that represents the Galaxy workflow language. Also, the workflow is listed as the crate's `mainEntity` (see the [Workflow RO-Crate profile](https://w3id.org/workflowhub/workflow-ro-crate/1.0)).
 
-To add [workflow testing metadata](https://github.com/crs4/life_monitor/wiki/Workflow-Testing-RO-Crate) to the crate:
+To add [workflow testing metadata](https://crs4.github.io/life_monitor/workflow_testing_ro_crate) to the crate:
 
 ```bash
 rocrate add test-suite -i test1
