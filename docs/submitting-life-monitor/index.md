@@ -1,1 +1,5 @@
 # Submitting workflows to LifeMonitor
+
+[LifeMonitor](https://www.lifemonitor.eu/) is a service to support the sustainability and reusability of published computational workflows. All workflows, including well-established ones that empower common research tasks, can suddenly stop working even if no change is made to them: for instance, there could be a regression in an unpinned dependency, or an external resource that the workflow relies upon might be moved to a different URL. Frequent automated **testing** is a fundamental practice that allows to expose such problems, giving workflow maintainers a chance to promptly intervene and fix them.
+
+Examples of popular platforms that help set up automated testing (and more) are [GitHub Actions](https://docs.github.com/en/actions/learn-github-actions/understanding-github-actions), [Jenkins](https://www.jenkins.io/) and [Travis CI](https://www.travis-ci.com/). LifeMonitor is a service that can connect with the above platforms, collecting test results for multiple workflows and presenting them under a single [graphical interface](https://app.lifemonitor.eu/dashboard).
