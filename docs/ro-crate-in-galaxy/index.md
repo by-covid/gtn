@@ -128,6 +128,7 @@ After the workflow has completed, we can export the RO-Crate. The crate does not
 >    - Location where the export should be sent to (Download locally or a remote location)
 >
 > 5. Click on the Download option
+> 
 >    ![screenshot of the beginning of the workflow run export options](./images/workflow-invocation-export.png)
 >
 >
