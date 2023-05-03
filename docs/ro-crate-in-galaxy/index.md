@@ -1,33 +1,3 @@
----
-layout: tutorial_hands_on
-
-title: Exporting Workflow Run Crates
-tags:
-- workflows
-zenodo_link: ''
-questions:
-- What is a Workflow Run Crate?
-- How can I export a Galaxy Workflow Run Crate?
-objectives:
-- Understanding, viewing and creating Galaxy Workflow Run Crates
-time_estimation: 30m
-key_points:
-- Galaxy Workflow Run Crates help you keep provenance of a workflow run / invocation.
-- Galaxy Workflow Run Crates give extra context to the standard workflow run export
-- Galaxy Workflow Run Crates can be exported from the top menu, **User -> Workflow Invocations**.
-contributions:
-  authorship:
-    - pauldg
-  testing:
-    - 
-  infrastructure:
-    - 
-  funding:
-    - 
-level: Intermediate
-subtopic: workflows
----
-
 # Exporting Workflow Run RO-Crates from Galaxy
 
 ## Introduction
