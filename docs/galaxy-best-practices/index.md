@@ -49,7 +49,14 @@ As an example we will use this [simple workflow](https://github.com/crs4/life_mo
  * Start a new history: click on the "+" button on the History panel to the right.
  * Upload the input dataset to the new history: on the left panel, go to "Upload Data" > "Choose local files" and select `input.bed`, then click "Start" > "Close".
  * Wait for the file to finish uploading (i.e., for the loading circle on the dataset's line in the history to disappear).
- * Run the workflow on the input dataset: click on "Workflow" in the upper menu, locate `sort-and-change-case`, and click on the play button to the right. The input slot should be already filled with `input.bed` since we started in a new history. Click on "Run Workflow" on the upper right of the center panel.
+ * Run the workflow on the input dataset: click on "Workflow" in the upper menu, locate `sort-and-change-case`, and click on the play button to the right.
+
+<img alt="Workflow Entry" src="img/workflow-entry.png" width="600" />
+
+ * This should take you to the workflow running page. The input slot should be already filled with `input.bed` since there is nothing else in the history. Click on "Run Workflow" on the upper right of the center panel.
+
+<img alt="Workflow Run Page" src="img/workflow-run-page.png" width="600" />
+
  * Wait for the workflow execution to finish.
  * On the upper menu, go to "User" > "Workflow Invocations", click on the invocation corresponding to the workflow just run and copy the invocation's ID. In my case it says "Invocation: a043e8c60873170b" on the right, where `a043e8c60873170b` is the ID.
  
