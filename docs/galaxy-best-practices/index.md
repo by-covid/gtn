@@ -35,17 +35,23 @@ repo2rocrate --repo-url https://github.com/iwc-workflows/parallel-accession-down
 
 ## Generating tests for your workflow
 
-What if you only have a workflow, but you don't have the test layout yet? You can use Planemo to generate it. As an example we will use this [simple workflow](https://github.com/crs4/life_monitor/blob/50cdb790ff125613aa07e70cb439e3a36b82d0bf/interaction_experiments/workflow_examples/galaxy/sort-and-change-case/sort-and-change-case.ga), which has only two steps: it sorts the input lines and changes them to upper case. Follow these steps to generate a test layout for it:
+What if you only have a workflow, but you don't have the test layout yet? You can use Planemo to generate it.
 
- * [Download the workflow](https://raw.githubusercontent.com/crs4/life_monitor/50cdb790ff125613aa07e70cb439e3a36b82d0bf/interaction_experiments/workflow_examples/galaxy/sort-and-change-case/sort-and-change-case.ga).
- * [Download an input file](https://raw.githubusercontent.com/crs4/life_monitor/50cdb790ff125613aa07e70cb439e3a36b82d0bf/interaction_experiments/workflow_examples/galaxy/sort-and-change-case/input.bed).
+```
+pip install planemo
+```
+
+As an example we will use this [simple workflow](https://github.com/crs4/life_monitor/blob/50cdb790ff125613aa07e70cb439e3a36b82d0bf/interaction_experiments/workflow_examples/galaxy/sort-and-change-case/sort-and-change-case.ga), which has only two steps: it sorts the input lines and changes them to upper case. Follow these steps to generate a test layout for it:
+
+ * Download [the workflow](https://raw.githubusercontent.com/crs4/life_monitor/50cdb790ff125613aa07e70cb439e3a36b82d0bf/interaction_experiments/workflow_examples/galaxy/sort-and-change-case/sort-and-change-case.ga) to a `sort-and-change-case.ga` file.
+ * Download [this input dataset](https://raw.githubusercontent.com/crs4/life_monitor/50cdb790ff125613aa07e70cb439e3a36b82d0bf/interaction_experiments/workflow_examples/galaxy/sort-and-change-case/input.bed) to an `input.bed` file.
  * Upload the workflow to Galaxy (e.g., [Galaxy Europe](https://usegalaxy.eu/)): from the upper menu, click on "Workflow" > "Import" > "Browse", choose `sort-and-change-case.ga` and then click "Import workflow".
- * Start a new history (click on the "+" button on the History panel to the right)
+ * Start a new history: click on the "+" button on the History panel to the right.
  * Upload the input dataset to the new history: on the left panel, go to "Upload Data" > "Choose local files" and select `input.bed`, then click "Start" > "Close".
  * Wait for the file to finish uploading (i.e., for the loading circle on the dataset's line in the history to disappear).
  * Run the workflow on the input dataset: click on "Workflow" in the upper menu, locate `sort-and-change-case`, and click on the play button to the right. The input slot should be already filled with `input.bed` since we started in a new history. Click on "Run Workflow" on the upper right of the center panel.
  * Wait for the workflow execution to finish.
- * On the upper menu, go to "User" > "Workflow Invocations", click on the invocation corresponding to the workflow just run and copy the invocation's ID. In my case it says "Invocation: a043e8c60873170b" on the right: the ID you want is `a043e8c60873170b`.
+ * On the upper menu, go to "User" > "Workflow Invocations", click on the invocation corresponding to the workflow just run and copy the invocation's ID. In my case it says "Invocation: a043e8c60873170b" on the right, where `a043e8c60873170b` is the ID.
  
 <img alt="Workflow Invocation" src="img/workflow-invocation.png" width="600" />
 
