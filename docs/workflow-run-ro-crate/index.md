@@ -6,7 +6,10 @@ The [Workflow Run RO-Crate](https://www.researchobject.org/workflow-run-crate/) 
 * [Workflow Run Crate](https://w3id.org/ro/wfrun/workflow) also describes computational processes, but in this case the execution is supposed to be orchestrated by a computational workflow (e.g., a Galaxy workflow);
 * [Provenance Run Crate](https://w3id.org/ro/wfrun/provenance) is based on Workflow Run Crate, but provides additional specifications for describing the details of each step's execution.
 
-As an example, consider a simple computation where we select the first four lines of a text file, and then we select the last three lines out of the initial selection. Suppose we start with the following input file, `lines.txt`:
+
+## Process Run Crate
+
+Consider a simple computation where we select the first four lines of a text file, and then we select the last three lines out of the initial selection. Suppose we start with the following input file, `lines.txt`:
 
 ```
 one
@@ -131,7 +134,14 @@ A Process Run Crate that describes the above computation will contain the three 
 }
 ```
 
-The RO-Crate describes two actions, `#runHead` and `#runTail`, which represent, respectively, the execution of the `head` and `tail` programs, referenced via the `instrument` property. Each action references its input(s) via `object` and its output(s) via `result`. Note how the two actions are connected by the fact that the output of `#runHead` is the input of `#runTail`: they form an "implicit workflow", whose steps have been executed manually rather than by a higher level software tool. The actions also refer to their executor via the `agent` property, and are linked to from the RO-Crate's root data entity via `mentions`. For more information, you can see the [Process Run Crate](https://w3id.org/ro/wfrun/process) profile, which contains the full specification.
+The RO-Crate describes two actions, `#runHead` and `#runTail`, which represent, respectively, the execution of the `head` and `tail` programs, referenced via the `instrument` property. Each action references its input(s) via `object` and its output(s) via `result`. Note how the two actions are connected by the fact that the output of `#runHead` is the input of `#runTail`: they form an "implicit workflow", whose steps have been executed manually rather than by a higher level software tool. The actions also refer to their executor via the `agent` property. The following diagram shows the relationships between the various entities:
+
+<img alt="head-tail diagram" src="img/head-tail-diagram.svg" width="600" />
+
+For more information, you can see the [Process Run Crate](https://w3id.org/ro/wfrun/process) profile, which contains the full specification.
+
+
+## Workflow Run Crate
 
 The [Workflow Run Crate](https://w3id.org/ro/wfrun/workflow) profile follow the same basic principles, but it's meant for the description of computations where the executions of the various steps are orchestrated by an automated workflow. An example of RO-Crate following this profile is available at [https://doi.org/10.5281/zenodo.7785860](https://doi.org/10.5281/zenodo.7785860). One of the main additions with respect to Process Run Crate is the representation of parameter "slots" (which can take different values according to the specific run) via `FormalParameter`:
 
@@ -145,5 +155,8 @@ The [Workflow Run Crate](https://w3id.org/ro/wfrun/workflow) profile follow the 
     "valueRequired": "True"
 }
 ```
+
+
+## Provenance Run Crate
 
 [Provenance Run Crate](https://w3id.org/ro/wfrun/provenance) takes the modeling one step further, specifying how to represent the actions corresponding to individual steps in the workflow. An example of such an RO-Crate is at [https://doi.org/10.5281/zenodo.7669622](https://doi.org/10.5281/zenodo.7669622).
