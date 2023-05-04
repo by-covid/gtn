@@ -1,4 +1,4 @@
-# Workflow Run RO-Crate
+# Workflow Run RO-Crate Introduction
 
 The [Workflow Run RO-Crate](https://www.researchobject.org/workflow-run-crate/) working group is developing a series of [RO-Crate profiles](https://www.researchobject.org/ro-crate/profiles.html) for representing the provenance of computational workflow executions. The set includes three profiles, which represent provenance with increasing level of detail:
 
@@ -143,18 +143,194 @@ For more information, you can see the [Process Run Crate](https://w3id.org/ro/wf
 
 ## Workflow Run Crate
 
-The [Workflow Run Crate](https://w3id.org/ro/wfrun/workflow) profile follow the same basic principles, but it's meant for the description of computations where the executions of the various steps are orchestrated by an automated workflow. An example of RO-Crate following this profile is available at [https://doi.org/10.5281/zenodo.7785860](https://doi.org/10.5281/zenodo.7785860). One of the main additions with respect to Process Run Crate is the representation of parameter "slots" (which can take different values according to the specific run) via `FormalParameter`:
+Suppose now that we write a script to automate the above process:
+
+```bash
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+die() {
+    echo $1 1>&2
+    exit 1
+}
+
+nargs=3
+if [ $# -ne ${nargs} ]; then
+    die "Usage: $0 input_file head_lines tail_lines"
+fi
+input_file=$1
+head_lines=$2
+tail_lines=$3
+
+output_file="chunk.txt"
+
+workdir=$(mktemp -d)
+head_output="${workdir}/temp.txt"
+head --lines ${head_lines} "${input_file}" >"${head_output}"
+tail --lines ${tail_lines} "${head_output}" >"${output_file}"
+rm -rf "${workdir}"
+```
+
+This script can be considered a workflow, since it orchestrates the execution of other applications, managing the flow of data between them, to get the final output. Note that the script is parametrized, so every time it is run we can choose a different input file and different values for the number of lines to extract with `head` and `tail`. If you name the script `head_tail.sh`, you can obtain the same result as above by running:
+
+```
+bash head_tail.sh lines.txt 4 3
+```
+
+The result will be stored in the `chunk.txt` file.
+
+A Workflow Run Crate to represent a run of this workflow would contain the workflow itself (`head_tail.sh`), the input and output files (`lines.txt`, `chunk.txt`) and an ro-crate-metadata.json file like the following:
 
 ```json
 {
-    "@id": "#num_lines_param-param",
-    "@type": "FormalParameter",
-    "additionalType": "Integer",
-    "description": "number of lines to select",
-    "name": "num_lines_param",
-    "valueRequired": "True"
+    "@context": "https://w3id.org/ro/crate/1.1/context",
+    "@graph": [
+        {
+            "@id": "ro-crate-metadata.json",
+            "@type": "CreativeWork",
+            "about": {"@id": "./"},
+            "conformsTo": [
+                {"@id": "https://w3id.org/ro/crate/1.1"},
+                {"@id": "https://w3id.org/workflowhub/workflow-ro-crate/1.0"}
+            ]
+        },
+        {
+            "@id": "./",
+            "@type": "Dataset",
+            "conformsTo": [
+                {"@id": "https://w3id.org/ro/wfrun/process/0.1"},
+                {"@id": "https://w3id.org/ro/wfrun/workflow/0.1"},
+                {"@id": "https://w3id.org/workflowhub/workflow-ro-crate/1.0"}
+            ],
+            "hasPart": [
+                {"@id": "head_tail.sh"},
+                {"@id": "lines.txt"},
+                {"@id": "chunk.txt"}
+            ],
+            "license": {"@id": "http://spdx.org/licenses/CC0-1.0"},
+            "mainEntity": {"@id": "head_tail.sh"},
+            "mentions": {"@id": "#runHeadTail"}
+        },
+        {
+            "@id": "https://w3id.org/ro/wfrun/process/0.1",
+            "@type": "CreativeWork",
+            "name": "Process Run Crate",
+            "version": "0.1"
+        },
+        {
+            "@id": "https://w3id.org/ro/wfrun/workflow/0.1",
+            "@type": "CreativeWork",
+            "name": "Workflow Run Crate",
+            "version": "0.1"
+        },
+        {
+            "@id": "https://w3id.org/workflowhub/workflow-ro-crate/1.0",
+            "@type": "CreativeWork",
+            "name": "Workflow RO-Crate",
+            "version": "1.0"
+        },
+        {
+            "@id": "head_tail.sh",
+            "@type": ["File", "SoftwareSourceCode", "ComputationalWorkflow"],
+            "name": "Head-Tail",
+            "programmingLanguage": {"@id": "#bash"},
+            "input": [
+                {"@id": "#input_file-param"},
+                {"@id": "#head_lines-param"},
+                {"@id": "#tail_lines-param"}
+            ],
+            "output": [
+                {"@id": "#output_file-param"}
+            ]
+        },
+        {
+            "@id": "#input_file-param",
+            "@type": "FormalParameter",
+            "additionalType": "File",
+            "name": "input_file",
+            "valueRequired": "True"
+        },
+        {
+            "@id": "#head_lines-param",
+            "@type": "FormalParameter",
+            "additionalType": "Integer",
+            "name": "head_lines",
+            "valueRequired": "True"
+        },
+        {
+            "@id": "#tail_lines-param",
+            "@type": "FormalParameter",
+            "additionalType": "Integer",
+            "name": "tail_lines",
+            "valueRequired": "True"
+        },
+        {
+            "@id": "#output_file-param",
+            "@type": "FormalParameter",
+            "additionalType": "File",
+            "name": "output_file"
+        },
+        {
+            "@id": "#bash",
+            "@type": "ComputerLanguage",
+            "identifier": "https://www.gnu.org/software/bash/",
+            "name": "Bash",
+            "url": "https://www.gnu.org/software/bash/"
+        },
+        {
+            "@id": "#runHeadTail",
+            "@type": "CreateAction",
+            "name": "Run of head_tail.sh",
+            "endTime": "2023-05-04T17:02:01+02:00",
+            "instrument": {"@id": "head_tail.sh"},
+            "object": [
+                {"@id": "lines.txt"},
+                {"@id": "#head_lines-pv"},
+                {"@id": "#tail_lines-pv"}
+            ],
+            "result": [
+                {"@id": "chunk.txt"}
+            ],
+            "agent": {"@id": "https://orcid.org/0000-0002-1825-0097"}
+        },
+        {
+            "@id": "lines.txt",
+            "@type": "File",
+            "exampleOfWork": {"@id": "#input_file-param"}
+        },
+        {
+            "@id": "#head_lines-pv",
+            "@type": "PropertyValue",
+            "exampleOfWork": {"@id": "#head_lines-param"},
+            "name": "head_lines",
+            "value": "4"
+        },
+        {
+            "@id": "#tail_lines-pv",
+            "@type": "PropertyValue",
+            "exampleOfWork": {"@id": "#tail_lines-param"},
+            "name": "tail_lines",
+            "value": "3"
+        },
+        {
+            "@id": "chunk.txt",
+            "@type": "File",
+            "exampleOfWork": {"@id": "#output_file-param"}
+        },
+        {
+            "@id": "https://orcid.org/0000-0002-1825-0097",
+            "@type": "Person",
+            "name": "Josiah Carberry"
+        }
+    ]
 }
 ```
+
+
+One of the main additions with respect to Process Run Crate is the representation of parameter "slots" (which can take different values according to the specific run) via `FormalParameter`.
+
+An example of a Workflow Run Crate for a Galaxy workflow is available at [https://doi.org/10.5281/zenodo.7785860](https://doi.org/10.5281/zenodo.7785860)
 
 
 ## Provenance Run Crate
