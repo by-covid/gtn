@@ -327,10 +327,19 @@ A Workflow Run Crate to represent a run of this workflow would contain the workf
 }
 ```
 
+Note how the crate has a `mainEntity` that points to the workflow (`head_tail.sh`). This is in conformance with the [Workflow RO-Crate](https://w3id.org/workflowhub/workflow-ro-crate/1.0) profile. In addition to Workflow RO-Crate, Workflow Run Crates also conform to the [Process Run Crate](https://w3id.org/ro/wfrun/process) profile and to the [Workflow Run Crate](https://w3id.org/ro/wfrun/workflow) profile itself, as you can see from the `conformsTo` entries.
 
-One of the main additions with respect to Process Run Crate is the representation of parameter "slots" (which can take different values according to the specific run) via `FormalParameter`.
+One of the main additions with respect to Process Run Crate is the representation of parameter "slots" (which can take different values according to the specific run) via `FormalParameter`. In this case we have three input parameters:
 
-An example of a Workflow Run Crate for a Galaxy workflow is available at [https://doi.org/10.5281/zenodo.7785860](https://doi.org/10.5281/zenodo.7785860)
+ * `#input_file-param`, corresponding to the input file
+ * `#head_lines-param`, corresponding to the number of lines to select with the `head` program
+ * `#tail_lines-param`, corresponding to the number of lines to select with the `tail` program
+
+The `#runHeadTail` action has three `object` entries, which represent the actual values used for the parameters in this specific run. The first item is the `lines.txt` file, while the other two are represented via [PropertyValue](https://schema.org/PropertyValue) instances, where the `value` property provides the values taken by the parameters. Crucially, the `exampleOfWork` property connects each parameter value to the corresponding `FormalParameter`. Similarly, the `chunk.txt` file matches the output parameter `#output_file-param`.
+
+An example of a Workflow Run Crate for a Galaxy workflow is available at [https://doi.org/10.5281/zenodo.7785860](https://doi.org/10.5281/zenodo.7785860).
+
+You can export a Galaxy workflow invocation as a Workflow Run Crate by following [this tutorial](https://by-covid.github.io/gtn/ro-crate-in-galaxy/).
 
 
 ## Provenance Run Crate
