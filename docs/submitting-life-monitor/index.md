@@ -64,7 +64,7 @@ straightforward way to use LM with your GitHub-hosted workflow. The app can do
 the following things. 
 
 * Examine your repository and apply a series of automated *checks*.
-* Suggest pull requests to make changes or additions to bring the workflow
+* Suggest pull requests (PRs) to make changes or additions to bring the workflow
   repository closer to conforming to best practices.
 * Open issues to let you know about problems detected by the checks:
   * in some cases, you can interact with the LifeMonitor bot through the issues,
@@ -93,10 +93,15 @@ account.
 
 ## LifeMonitor Checks
 
+Once the LM app is installed, it starts working for you by running its automated
+checks. The checks generally report one problem at a time, by opening an issue
+or opening a PR with a suggested fix.  In the following subsections we'll show
+the sequence of PR's and issues that are opened in our Sort and Change Case
+workflow repository.
+
 ### RO-Crate metadata
 
-Once the LM app is installed, it starts working for you. It might notice that we
-don't have an RO-Crate:
+LM might notice that we don't have an RO-Crate:
 ![Missing RO-Crate PR](./images/missing_ro_crate_pr.png)
 
 The LM app **automatically** executes
@@ -104,15 +109,80 @@ The LM app **automatically** executes
 practices](../galaxy-best-practices#best-practice-repositories-and-ro-crate) and
 opens a pull request to propose the resulting RO-Crate for integration in our
 repository.  Review the RO-Crate and integrate additional metadata or correct
-it as necessary. Finally, merge the into your repository.
+it as necessary. Finally, merge the into your repository.  LifeMonitor with
+automatically delete the PR branch once merged, to keep your repository tidy.
 ![Merge PR](./images/merge_pr.png)
 
 
+### LifeMonitor configuration file
 
-Examples of popular platforms that help set up automated testing (and more) are
-[GitHub
-Actions](https://docs.github.com/en/actions/learn-github-actions/understanding-github-actions),
-[Jenkins](https://www.jenkins.io/) and [Travis CI](https://www.travis-ci.com/).
-LifeMonitor is a service that can connect with the above platforms, collecting
-test results for multiple workflows and presenting them under a single
-[graphical interface](https://app.lifemonitor.eu/dashboard).
+Next, LM suggests that we add a [LifeMonitor configuration
+file](https://www.lifemonitor.eu/lm_wft_best_practices_github_app#configuration-file)
+to our repository.  Through this file in YAML format, we can customize some aspects of
+LifeMonitor's behavior and provide it with additional metadata.
+![LM config PR](./images/lm_config_pr.png)
+
+This time, we're going to make some changes to the default configuration before
+accepting it.  The PR's "Conversation" tab on GitHub tells us to push changes to
+a specific branch to make changes to the file:
+![LM config PR branch](./images/lm_config_pr_branch.png)
+
+So we'll go to the local copy of our workflow repository, fetch the remote and
+checkout this branch:
+
+    $ cd sort-and-change-case-workflow
+    $ git fetch origin
+    $ git checkout lifemonitor-issue-0d71f7fa25ea5d7c5b9f63e27b08b59fbc1b5349
+    Branch 'lifemonitor-issue-0d71f7fa25ea5d7c5b9f63e27b08b59fbc1b5349' set up to track remote branch 'lifemonitor-issue-0d71f7fa25ea5d7c5b9f63e27b08b59fbc1b5349' from 'origin'.
+    Switched to a new branch 'lifemonitor-issue-0d71f7fa25ea5d7c5b9f63e27b08b59fbc1b5349'
+
+Now we can edit the file locally with our favorite text editor:
+
+    $ vim .lifemonitor.yaml
+
+We're going to set the workflow name and make it public (which means that anyone
+will be able to see it on LifeMonitor):
+
+    name: "Sort and change case"
+    public: true
+
+We're also going to enable automatic registration of workflow releases in
+WorkflowHub and LifeMonitor.  We're going to edit the configuration so that:
+
+1. workflow tag names that follow the [Semantic Versioning](https://semver.org/)
+   convention are recognized as releases;
+2. the WorkflowHub record is updated for each new release
+
+    push:
+      tags:
+        - name: "*.*.*"  #  pattern to identify a release tag
+          update_registries: ["wfhub"]  # Registry to be updated. "wfhub" == WorkflowHub
+
+If you're just testing things, avoid dirtying your WorkflowHub collection.
+Instead, point the LM app to the development instance of WorkflowHub by
+specifying:
+
+    
+          update_registries: ["wfhubdev"]  # Registry to be updated. "wfhubdev" == WorkflowHub dev
+
+:warning: To have your workflow's WorkflowHub entry automatically updated, you
+**must** connect your WorkflowHub (or def.WorkflowHub) account to LifeMonitor.
+Check you [LifeMonitor account
+profile](https://app.lifemonitor.eu/api/account/profile): if the buttons shown
+in the image below say "**connected**", you're ok; else, click on the
+appropriate "**connect** button and log into the WorkflowHub with the account
+you'd like LifeMonitor to use.
+![Connect WorkflowHub
+buttons](./images/account_connections_whub-dev-disconnected.png)
+The LifeMonitor documentation has [a more detailed explanation](https://www.lifemonitor.eu/faq#which-external-accounts-are-linked-with-my-lifemonitor-account).
+
+Commit your changes now and push them to the repository:
+
+    $ git commit -a -m "Update LifeMonitor settings"
+    [lifemonitor-issue-0d71f7fa25ea5d7c5b9f63e27b08b59fbc1b5349 0924ad7] Update LifeMonitor settings
+     1 file changed, 22 insertions(+), 52 deletions(-)
+     rewrite .lifemonitor.yaml (63%)
+    $ git push origin
+
+Now you can go back to the Pull Request and merge it.
+![LM config PR merged](./images/lm_config_pr_merged.png)
