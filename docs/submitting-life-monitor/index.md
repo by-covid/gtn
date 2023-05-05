@@ -53,7 +53,8 @@ instructions.
 As a running example, we're going to use a simple "sort and change case"
 workflow: it merely takes a text file, sorts the lines and swaps the case of
 all the letters.  You can access and inspect this example workflow, its tests
-and its GitHub Action through [this link](./sort-and-change-case-workflow/).
+and its GitHub Action through
+:warning: **UPDATE THIS LINK** [this link](https://github.com/ilveroluca/gtn/tree/main/docs/submitting-life-monitor/planemo_test_setup).
 
 
 ## Installing the LM GitHub App
@@ -90,7 +91,21 @@ services.
 account.
 
 
+## LifeMonitor Checks
 
+### RO-Crate metadata
+
+Once the LM app is installed, it starts working for you. It might notice that we
+don't have an RO-Crate:
+![Missing RO-Crate PR](./images/missing_ro_crate_pr.png)
+
+The LM app **automatically** executes
+[repo2crate](https://github.com/crs4/repo2rocrate) as recommended by [best
+practices](../galaxy-best-practices#best-practice-repositories-and-ro-crate) and
+opens a pull request to propose the resulting RO-Crate for integration in our
+repository.  Review the RO-Crate and integrate additional metadata or correct
+it as necessary. Finally, merge the into your repository.
+![Merge PR](./images/merge_pr.png)
 
 
 
