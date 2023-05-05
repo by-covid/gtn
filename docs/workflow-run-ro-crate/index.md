@@ -344,4 +344,137 @@ You can export a Galaxy workflow invocation as a Workflow Run Crate by following
 
 ## Provenance Run Crate
 
-[Provenance Run Crate](https://w3id.org/ro/wfrun/provenance) takes the modeling one step further, specifying how to represent the actions corresponding to individual steps in the workflow. An example of such an RO-Crate is at [https://doi.org/10.5281/zenodo.7669622](https://doi.org/10.5281/zenodo.7669622).
+[Provenance Run Crate](https://w3id.org/ro/wfrun/provenance) further extends Workflow Run Crate, specifying how to represent the actions corresponding to individual steps in the workflow. The extent to which this can be done may depend on how the workflow is written and how the workflow engine operates. For instance, the shell script we used in the previous section does not keep the intermediate output from the execution of `head`: it's stored in a temporary directory, which is deleted at the end of the script.
+
+A workflow management system that supports Provenance Run Crate is [StreamFlow](https://streamflow.di.unito.it/), which executes [CWL](https://www.commonwl.org/) workflows. Let's write a CWL workflow that implements our head-tail application. We start by writing `headtool.cwl`, a wrapper for the `head` tool:
+
+```yaml
+class: CommandLineTool
+cwlVersion: v1.0
+
+baseCommand: head
+
+inputs:
+  lines:
+    type: int
+    inputBinding:
+      position: 1
+      prefix: "--lines"
+  input:
+    type: File
+    inputBinding:
+      position: 2
+outputs:
+  output:
+    type: File
+    outputBinding:
+      glob: head_out.txt
+stdout: head_out.txt
+```
+
+We then do the same for `tail`, calling the wrapper `tailtool.cwl`:
+
+```yaml
+class: CommandLineTool
+cwlVersion: v1.0
+
+baseCommand: tail
+
+inputs:
+  lines:
+    type: int
+    inputBinding:
+      position: 1
+      prefix: "--lines"
+  input:
+    type: File
+    inputBinding:
+      position: 2
+outputs:
+  output:
+    type: File
+    outputBinding:
+      glob: tail_out.txt
+stdout: tail_out.txt
+```
+
+Finally, we write the workflow, `head_tail.cwl`:
+
+```yaml
+class: Workflow
+cwlVersion: v1.0
+
+inputs:
+  input_file:
+    type: File
+  head_lines:
+    type: int
+  tail_lines:
+    type: int
+outputs:
+  output_file:
+    type: File
+    outputSource: tail/output
+
+steps:
+  head:
+    in:
+      lines: head_lines
+      input: input_file
+    out: [output]
+    run: headtool.cwl
+  tail:
+    in:
+      lines: tail_lines
+      input: head/output
+    out: [output]
+    run: tailtool.cwl
+```
+
+Now that we have the workflow, let's write the file that contains the parameter settings for our specific run, `params.yml`:
+
+```yaml
+input_file:
+  class: File
+  location: lines.txt
+head_lines: 4
+tail_lines: 3
+```
+
+Now, install StreamFlow (we're going to need a version with RO-Crate support). To avoid possible conflicts, consider installing in a clean [virtual environment](https://docs.python.org/3/library/venv.html).
+
+```
+pip install 'streamflow==0.2.0.dev4'
+```
+
+Now run the workflow:
+
+```
+cwl-runner head_tail.cwl params.yml
+```
+
+To generate the RO-Crate, we're going to need the workflow's name in the StreamFlow database:
+
+```console
+$ streamflow list
+NAME                                  TYPE EXECUTIONS 
+f6b2273d-a945-4b27-aa98-dcfe0b778f4c  cwl  1
+```
+
+In your case, the name might be different. Now generate the RO-Crate with:
+
+```
+streamflow prov f6b2273d-a945-4b27-aa98-dcfe0b778f4c
+```
+
+taking care to replace the workflow name with the actual one you got from `streamflow list`. This will generate a zip archive containing the RO-Crate. Unzip the archive to get the RO-Crate directory:
+
+```
+unzip -d f6b2273d-a945-4b27-aa98-dcfe0b778f4c{,.crate.zip}
+```
+
+If you inspect `f6b2273d-a945-4b27-aa98-dcfe0b778f4c/ro-crate-metadata.json`, you will find a similar structure to the one seen for Workflow Run Crate, but with a lot more detail. Most notably, there will be three actions: in addition to the one representing the execution of the whole workflow, there will be two more, representing the execution of `headtool.cwl` and of `tailtool.cwl`. Each of this points to the corresponding tool via `instrument`, and to its inputs and outputs via `object` and `result`. The intermediate file resulting from the `head` run (`head_out.txt`) is included, and listed both as an output of the `head` run and as an input of the `tail` run. This situation is similar to what we've seen in the [Process Run Crate example](#process-run-crate), but this time everything has been orchestrated by a workflow engine on the basis of a formal workflow description.
+
+More information on the entities represented in a Provenance Run Crate is available in the [specification](https://w3id.org/ro/wfrun/provenance).
+
+An example a Provenance Run Crate representing an execution of a digital pathology image annotation workflow is available at [https://doi.org/10.5281/zenodo.7669622](https://doi.org/10.5281/zenodo.7669622).
