@@ -54,7 +54,7 @@ As a running example, we're going to use a simple "sort and change case"
 workflow: it merely takes a text file, sorts the lines and swaps the case of all
 the letters.  You can access and inspect this example workflow, its tests and
 its GitHub Action through [this
-link](https://by-covid.github.io/gtn/tree/main/docs/submitting-life-monitor/planemo_test_setup).
+link](https://github.com/by-covid/gtn/tree/main/docs/submitting-life-monitor/sort-and-change-case-workflow).
 
 
 ## Installing the LM GitHub App
