@@ -141,8 +141,7 @@ profile](https://app.lifemonitor.eu/account/profile): if the buttons shown
 in the image below say "**connected**", you're ok; else, click on the
 appropriate "**connect** button and log into the WorkflowHub with the account
 you'd like LifeMonitor to use.
-![Connect WorkflowHub
-buttons](./images/account_connections_whub-dev-disconnected.png)
+<img alt="Connect WorkflowHub buttons" src="./images/account_connections_whub-dev-disconnected.png" width="600" />
 The LifeMonitor documentation has [a more detailed explanation](https://www.lifemonitor.eu/faq#which-external-accounts-are-linked-with-my-lifemonitor-account).
 
 
@@ -159,7 +158,7 @@ you may be taken to the WorkflowHub authentication page; in that case, log into
 the WorkflowHub with the same account credentials that you connected in the
 previous step.
 
-![LM config registry integration](./images/lm_config_registry_integration.png)
+<img alt="LM config registry integration" src="./images/lm_config_registry_integration.png" width="600" />
 
 
 ## LifeMonitor Checks
@@ -173,7 +172,7 @@ workflow repository.
 ### RO-Crate metadata
 
 LM might notice that we don't have an RO-Crate:
-![Missing RO-Crate PR](./images/missing_ro_crate_pr.png)
+<img alt="Missing RO-Crate PR" src="./images/missing_ro_crate_pr.png" width="600" />
 
 The LM app **automatically** executes
 [repo2crate](https://github.com/crs4/repo2rocrate) as recommended by [best
@@ -182,7 +181,7 @@ opens a pull request to propose the resulting RO-Crate for integration in our
 repository.  Review the RO-Crate and integrate additional metadata or correct
 it as necessary. Finally, merge the into your repository.  LifeMonitor with
 automatically delete the PR branch once merged, to keep your repository tidy.
-![Merge PR](./images/merge_pr.png)
+<img alt="Merge PR" src="./images/merge_pr.png" width="600" />
 
 
 ### LifeMonitor configuration file
@@ -191,12 +190,12 @@ Next, LM suggests that we add a [LifeMonitor configuration
 file](https://www.lifemonitor.eu/lm_wft_best_practices_github_app#configuration-file)
 to our repository.  Through this file in YAML format, we can customize some aspects of
 LifeMonitor's behavior and provide it with additional metadata.
-![LM config PR](./images/lm_config_pr.png)
+<img alt="LM config PR" src="./images/lm_config_pr.png" width="600" />
 
 This time, we're going to make some changes to the default configuration before
 accepting it.  The PR's "Conversation" tab on GitHub tells us to push changes to
 a specific branch to make changes to the file:
-![LM config PR branch](./images/lm_config_pr_branch.png)
+<img alt="LM config PR branch" src="./images/lm_config_pr_branch.png" width="600" />
 
 So we'll go to the local copy of our workflow repository, fetch the remote and
 checkout this branch:
@@ -247,7 +246,7 @@ Commit your changes now and push them to the repository:
     $ git push origin
 
 Now you can go back to the Pull Request and merge it.
-![LM config PR merged](./images/lm_config_pr_merged.png)
+<img alt="LM config PR merged" src="./images/lm_config_pr_merged.png" width="600" />
 
 
 ## Automatic workflow registration to WorkflowHub
@@ -281,8 +280,7 @@ you enabled and selected.
 you that the registration happened and providing you with a direct link to the
 workflow on LifeMonitor (from which you'll be able to access the corresponding
 WorkflowHub entry)
-
-![LM new registration](./images/lm_new_registration.png)
-![LM new registration workflowhub](./images/lm_new_registration-workflowhub.png)
+<img alt="LM new registration" src="./images/lm_new_registration.png" width="600" />
+<img alt="LM new registration workflowhub" src="./images/lm_new_registration-workflowhub.png" width="600" />
 
 
