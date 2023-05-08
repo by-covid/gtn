@@ -153,17 +153,19 @@ WorkflowHub and LifeMonitor.  We're going to edit the configuration so that:
    convention are recognized as releases;
 2. the WorkflowHub record is updated for each new release
 
+```
     push:
       tags:
         - name: "*.*.*"  #  pattern to identify a release tag
           update_registries: ["wfhub"]  # Registry to be updated. "wfhub" == WorkflowHub
+```
 
 If you're just testing things, avoid dirtying your WorkflowHub collection.
 Instead, point the LM app to the development instance of WorkflowHub by
 specifying:
 
     
-          update_registries: ["wfhubdev"]  # Registry to be updated. "wfhubdev" == WorkflowHub dev
+    update_registries: ["wfhubdev"]  # Registry to be updated. "wfhubdev" == WorkflowHub dev
 
 :warning: To have your workflow's WorkflowHub entry automatically updated, you
 **must** connect your WorkflowHub (or def.WorkflowHub) account to LifeMonitor.
