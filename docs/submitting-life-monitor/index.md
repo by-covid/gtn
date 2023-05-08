@@ -181,7 +181,7 @@ opens a pull request to propose the resulting RO-Crate for integration in our
 repository.  Review the RO-Crate and integrate additional metadata or correct
 it as necessary. Finally, merge the into your repository.  LifeMonitor with
 automatically delete the PR branch once merged, to keep your repository tidy.
-<img alt="Merge PR" src="./images/merge_pr.png" width="600" />
+<img alt="Merge PR" src="./images/merge_pr.png" width="400" />
 
 
 ### LifeMonitor configuration file
@@ -195,7 +195,7 @@ LifeMonitor's behavior and provide it with additional metadata.
 This time, we're going to make some changes to the default configuration before
 accepting it.  The PR's "Conversation" tab on GitHub tells us to push changes to
 a specific branch to make changes to the file:
-<img alt="LM config PR branch" src="./images/lm_config_pr_branch.png" width="600" />
+<img alt="LM config PR branch" src="./images/lm_config_pr_branch.png" width="400" />
 
 So we'll go to the local copy of our workflow repository, fetch the remote and
 checkout this branch:
