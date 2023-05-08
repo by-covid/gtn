@@ -51,10 +51,10 @@ instructions.
 ### Running example
 
 As a running example, we're going to use a simple "sort and change case"
-workflow: it merely takes a text file, sorts the lines and swaps the case of
-all the letters.  You can access and inspect this example workflow, its tests
-and its GitHub Action through
-:warning: **UPDATE THIS LINK** [this link](https://github.com/ilveroluca/gtn/tree/main/docs/submitting-life-monitor/planemo_test_setup).
+workflow: it merely takes a text file, sorts the lines and swaps the case of all
+the letters.  You can access and inspect this example workflow, its tests and
+its GitHub Action through [this
+link](https://by-covid.github.io/gtn/tree/main/docs/submitting-life-monitor/planemo_test_setup).
 
 
 ## Installing the LM GitHub App
