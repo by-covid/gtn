@@ -163,7 +163,7 @@ previous step.
 
 ## LifeMonitor Checks
 
-Once the LM app is installed, it starts working for you by running its automated
+Once the LM GitHub app is installed, it starts working for you by running its automated
 checks. The checks generally report one problem at a time, by opening an issue
 or opening a PR with a suggested fix.  In the following subsections we'll show
 the sequence of PR's and issues that are opened in our Sort and Change Case
@@ -248,6 +248,14 @@ Commit your changes now and push them to the repository:
 Now you can go back to the Pull Request and merge it.
 <img alt="LM config PR merged" src="./images/lm_config_pr_merged.png" width="600" />
 
+### New and changing checks
+
+The set of automated checks provided by LifeMonitor is under active development.
+This means that the exact sequence of issue and PR's you see may change over
+time: this is normal.  Do feel free to [open an
+issue](https://github.com/crs4/life_monitor/issues) if you notice something that
+doesn't work as you expect or if you have a suggestion for a new automated
+check.
 
 ## Automatic workflow registration to WorkflowHub
 
