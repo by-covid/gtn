@@ -107,7 +107,7 @@ WorkflowHub registry.
 
 [Click
 here](https://www.lifemonitor.eu/lm_test_monitoring#enabling-e-mail-notifications)
-to access the LifeMonitor documentation on how to perform this step:
+to access the LifeMonitor documentation on how to perform this step.
 
 
 ### Configure GitHub integration
