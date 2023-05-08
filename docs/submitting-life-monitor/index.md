@@ -221,7 +221,7 @@ WorkflowHub and LifeMonitor.  We're going to edit the configuration so that:
 
 1. workflow tag names that follow the [Semantic Versioning](https://semver.org/)
    convention are recognized as releases;
-2. the WorkflowHub record is updated for each new release
+2. the WorkflowHub record is updated for each new release.
 
 ```
     push:
@@ -279,8 +279,25 @@ you enabled and selected.
 :bulb: If you enabled e-mail notifications, you should receive an email telling
 you that the registration happened and providing you with a direct link to the
 workflow on LifeMonitor (from which you'll be able to access the corresponding
-WorkflowHub entry)
+WorkflowHub entry).
 <img alt="LM new registration" src="./images/lm_new_registration.png" width="600" />
+
+The workflow should also appear on your [LifeMonitor
+dashboard](https://app.lifemonitor.eu/dashboard).  If the GitHub Action that
+tests your workflow has not been executed yet, then LM will report that the test
+status is "unavailable" -- but this is normal.  After you execute your action
+then the system will report its passing or failing status.
+
+The workflow entry in LifeMonitor also has a link to the corresponding
+WorkflowHub entry.  Follow the link to reach a page with your workflow's
+metadata:
 <img alt="LM new registration workflowhub" src="./images/lm_new_registration-workflowhub.png" width="600" />
 
+## Profit
 
+Now that you've completed the setup, you'll be notified if your workflow's tests
+start to fail. LM will also periodically try to trigger the execution of your
+testing GitHub Action should there be no commits on the repository that would
+trigger the tests on their own.  Also, any new workflow releases that you create
+will be automatically be propagated to both LifeMonitor and WorkflowHub, keeping
+your registry up to date and your workflow a little more FAIR.
