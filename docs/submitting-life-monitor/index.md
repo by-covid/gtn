@@ -90,6 +90,77 @@ services.
 :bulb: You will also need to connect your GitHub account to your LifeMonitor
 account.
 
+## Configure your LifeMonitor account
+
+To fully enable the features provided by LifeMonitor you need to enable some
+optional settings in the LM configuration.
+
+### Enable e-mail notifications
+
+LifeMonitor can send you emails to notify you of important events related to
+your workflows or the workflows you've [subscribed
+to](https://www.lifemonitor.eu/lm_dashboard#subscribing-to-workflows).  We
+recommend performing this step to -- among other things -- receive notifications
+if your workflow tests start failing, or when a release of your workflow has
+been registered with the LifeMonitor test monitoring service and with the
+WorkflowHub registry.
+
+[Click
+here](https://www.lifemonitor.eu/lm_test_monitoring#enabling-e-mail-notifications)
+to access the LifeMonitor documentation on how to perform this step:
+
+
+### Configure GitHub integration
+
+If you [installed the LM GitHub App](#installing-the-lm-github-app) on your
+workflow repository your GitHub account should already be connected to
+LifeMonitor. Verify this by accessing your account's [profile
+page](https://app.lifemonitor.eu/account/profile) and checking that the
+**Connected Accounts** table includes an entry for GitHub and it says
+**CONNECTED**; if it says "CONNECT", then click on the button and follow the
+procedure.  See the [LifeMonitor
+documetation](https://www.lifemonitor.eu/faq#which-external-accounts-are-linked-with-my-lifemonitor-account)
+for more details.
+
+If you want, you now check the LifeMonitor [GitHub integration
+settings](https://app.lifemonitor.eu/account/profile?currentView=githubSettingsTab)
+for your account. These are the default settings which will be applied unless
+overridden with a repository-specific configuration file (we'll see how in a
+later section).
+
+
+### Connect your WorkflowHub account to LifeMonitor
+
+Connecting your WorkflowHub identity to LifeMonitor allows LifeMonitor to
+perform specific WorkflowHub actions on your behalf (using your identity).
+These actions consist in registering and updating workflow entries as well as
+querying the WorkflowHub for the workflows you have previously registered.
+
+Check the *Account* tab on your [LifeMonitor account
+profile](https://app.lifemonitor.eu/account/profile): if the buttons shown
+in the image below say "**connected**", you're ok; else, click on the
+appropriate "**connect** button and log into the WorkflowHub with the account
+you'd like LifeMonitor to use.
+![Connect WorkflowHub
+buttons](./images/account_connections_whub-dev-disconnected.png)
+The LifeMonitor documentation has [a more detailed explanation](https://www.lifemonitor.eu/faq#which-external-accounts-are-linked-with-my-lifemonitor-account).
+
+
+### Enable WorkflowHub Integration for your account
+
+Enabling registry integration for WorkflowHub enables the LM automations related
+to workflow registry activities.  
+
+
+Go to the *Registry Integration* tab on your [LifeMonitor account
+profile](https://app.lifemonitor.eu/account/profile?currentView=registrySettingsTab).
+Enable the switches for both "wfhub" and "wfhubdev".  When you flip the switch,
+you may be taken to the WorkflowHub authentication page; in that case, log into
+the WorkflowHub with the same account credentials that you connected in the
+previous step.
+
+![LM config registry integration](./images/lm_config_registry_integration.png)
+
 
 ## LifeMonitor Checks
 
@@ -138,7 +209,7 @@ checkout this branch:
 
 Now we can edit the file locally with our favorite text editor:
 
-    $ vim .lifemonitor.yaml
+    $ nvim .lifemonitor.yaml
 
 We're going to set the workflow name and make it public (which means that anyone
 will be able to see it on LifeMonitor):
@@ -167,17 +238,6 @@ specifying:
     
     update_registries: ["wfhubdev"]  # Registry to be updated. "wfhubdev" == WorkflowHub dev
 
-:warning: To have your workflow's WorkflowHub entry automatically updated, you
-**must** connect your WorkflowHub (or def.WorkflowHub) account to LifeMonitor.
-Check you [LifeMonitor account
-profile](https://app.lifemonitor.eu/api/account/profile): if the buttons shown
-in the image below say "**connected**", you're ok; else, click on the
-appropriate "**connect** button and log into the WorkflowHub with the account
-you'd like LifeMonitor to use.
-![Connect WorkflowHub
-buttons](./images/account_connections_whub-dev-disconnected.png)
-The LifeMonitor documentation has [a more detailed explanation](https://www.lifemonitor.eu/faq#which-external-accounts-are-linked-with-my-lifemonitor-account).
-
 Commit your changes now and push them to the repository:
 
     $ git commit -a -m "Update LifeMonitor settings"
@@ -188,3 +248,41 @@ Commit your changes now and push them to the repository:
 
 Now you can go back to the Pull Request and merge it.
 ![LM config PR merged](./images/lm_config_pr_merged.png)
+
+
+## Automatic workflow registration to WorkflowHub
+
+
+To have your workflow's WorkflowHub entry automatically updated, you
+**must** [connect your WorkflowHub (or dev.WorkflowHub)
+account](#connect-your-workflowhub-account-to-lifemonitor) to LifeMonitor
+and [enable WorkflowHub (or dev.WorkflowHub)
+integration](#enable-workflowhub-integration-for-your-account).
+
+## Make a workflow release
+
+Now you can make a release of your workflow. The LifeMonitor
+[configuration](#lifeMonitor-configuration-file) we specified for the workflow
+repository specifies that we identify release by git tags matching the
+expression.  You can tag the workflow as release "0.1.0" with the git CLI:
+
+    $ git tag 0.1.0
+    $ git push --tags origin
+    Total 0 (delta 0), reused 0 (delta 0), pack-reused 0
+    To github.com:crs4/sort-and-change-case-workflow.git
+     * [new tag]         0.1.0 -> 0.1.0
+
+
+The LifeMonitor now start working and automatically register the workflow with
+both the LifeMonitor test monitoring functionality and the WorkflowHub registry
+you enabled and selected.
+
+:bulb: If you enabled e-mail notifications, you should receive an email telling
+you that the registration happened and providing you with a direct link to the
+workflow on LifeMonitor (from which you'll be able to access the corresponding
+WorkflowHub entry)
+
+![LM new registration](./images/lm_new_registration.png)
+![LM new registration workflowhub](./images/lm_new_registration-workflowhub.png)
+
+
