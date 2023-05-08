@@ -119,10 +119,10 @@ page](https://app.lifemonitor.eu/account/profile) and checking that the
 **Connected Accounts** table includes an entry for GitHub and it says
 **CONNECTED**; if it says "CONNECT", then click on the button and follow the
 procedure.  See the [LifeMonitor
-documetation](https://www.lifemonitor.eu/faq#which-external-accounts-are-linked-with-my-lifemonitor-account)
+documentation](https://www.lifemonitor.eu/faq#which-external-accounts-are-linked-with-my-lifemonitor-account)
 for more details.
 
-If you want, you now check the LifeMonitor [GitHub integration
+If you want, you can now check the LifeMonitor [GitHub integration
 settings](https://app.lifemonitor.eu/account/profile?currentView=githubSettingsTab)
 for your account. These are the default settings which will be applied unless
 overridden with a repository-specific configuration file (we'll see how in a
@@ -179,7 +179,7 @@ The LM app **automatically** executes
 practices](../galaxy-best-practices#best-practice-repositories-and-ro-crate) and
 opens a pull request to propose the resulting RO-Crate for integration in our
 repository.  Review the RO-Crate and integrate additional metadata or correct
-it as necessary. Finally, merge the into your repository.  LifeMonitor with
+it as necessary. Finally, merge the changes into your repository.  LifeMonitor with
 automatically delete the PR branch once merged, to keep your repository tidy.
 <img alt="Merge PR" src="./images/merge_pr.png" width="400" />
 
